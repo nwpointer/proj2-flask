@@ -44,12 +44,23 @@ app.logger.setLevel(logging.DEBUG)
 @app.route("/schedule")
 def index():
   app.logger.debug("Main page entry")
+  raw = open('static/schedule.txt')
+  processed = pre.process(raw)
+ 
   if 'schedule' not in flask.session:
       app.logger.debug("Processing raw schedule file")
-      raw = open('static/schedule.txt')
-      flask.session['schedule'] = pre.process(raw)
+      flask.session['schedule'] = processed[0]
 
-  return flask.render_template('syllabus.html')
+
+  date=[]
+  thisWeek =arrow.now().week
+  for index in range(len(processed[0])):
+    w = processed[1].replace(weeks=+index)
+    if(w.week == arrow.now().week):
+      nownindex = index
+    date.append(w)
+
+  return flask.render_template('syllabus.html', date=date)
 
 
 @app.errorhandler(404)
@@ -71,6 +82,11 @@ def format_arrow_date( date ):
         return normal.format("ddd MM/DD/YYYY")
     except:
         return "(bad date)"
+
+@app.template_filter( 'currentweek' )
+def is_current_week( i ):
+    ithweek = pre.process(open('static/schedule.txt'))[1].week + i;
+    return 'currentweek' if ithweek == arrow.now().week+1 else ''
 
 
 #############

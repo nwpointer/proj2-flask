@@ -12,13 +12,17 @@
 <h1>Schedule</h1>
 
 <table class="class-schedule">
+
+  {{now}}
+
   {% for entry in session.schedule %}
   {% if loop.index is divisibleby 2 %}
-  <tr class="even">
+  <tr class="even {{loop.index | currentweek}}">
   {% else %}
-  <tr class="odd">
+  <tr class="odd {{loop.index | currentweek}}">
   {% endif %}	   
     <td class="week">{{ entry.week }}</td>
+    <td class="date">{{ date[loop.index-1] | fmtdate }}</td>
     <td class="topic">{{ entry.topic }}</td>
     <td class="project">{{ entry.project}}</td>
   </tr>

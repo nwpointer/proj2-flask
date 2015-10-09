@@ -31,7 +31,8 @@ def process(raw):
 
         if field == "begin":
             try:
-                base = arrow.get(content)
+                global base
+                base = arrow.get(content, 'MM/DD/YYYY')
             except:
                 raise ValueError("Unable to parse date {}".format(content))
 
@@ -49,7 +50,7 @@ def process(raw):
         else:
             raise ValueError("Syntax error in line: {}".format(line))
 
-    return cooked
+    return [cooked, base]
 
 
 def main():
